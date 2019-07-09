@@ -1,7 +1,4 @@
-@file:Suppress("INLINE_FROM_HIGHER_PLATFORM")
-
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-
+//@file:Suppress("INLINE_FROM_HIGHER_PLATFORM")
 // fixme remove this suppression
 
 plugins {
@@ -9,12 +6,12 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-repositories {
-    maven("$rootDir/build/repo")
-}
-
 kotlin.target {
     browser({ webpackTask { this.inputs.files(kotlin.target.compilations["main"].output.allOutputs) } })
+
+    compilations.getByName("main") {
+        kotlinOptions.sourceMapEmbedSources = "always"
+    }
 }
 
 kotlin.sourceSets.getByName("main") {
@@ -22,21 +19,10 @@ kotlin.sourceSets.getByName("main") {
         implementation(project(":model"))
 
         implementation(kotlin("stdlib-js"))
+        implementation("org.jetbrains:kotlin-styled:1.0.0-pre.73-kotlin-1.3.40")
+        implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.6.12")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.1")
         implementation(npm("vis", "4.21.0"))
-        implementation(npm("@types/vis", "4.21.0"))
+//        implementation(npm("@types/vis", "4.19.0"))
     }
 }
-
-/*
-val webpackOutput by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = false
-
-    val browserWebpack by tasks.withType<KotlinWebpack>()
-    project.artifacts.add(name, project.provider { browserWebpack.outputPath.listFiles().single() }) {
-        builtBy(browserWebpack)
-    }
-}
-
-*/

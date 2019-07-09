@@ -3,6 +3,8 @@ pluginManagement {
         mavenLocal()
         maven("https://kotlin.bintray.com/kotlin-dev")
 
+        jcenter()
+
         @Suppress("UnstableApiUsage")
         gradlePluginPortal()
     }

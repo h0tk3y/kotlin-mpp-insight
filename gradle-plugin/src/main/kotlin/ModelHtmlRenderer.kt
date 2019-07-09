@@ -26,17 +26,11 @@ object ModelHtmlRenderer {
             script(type = "text/javascript", src = jsRelativeFile.path) {  }
 
             div {
-                h2 { +"Source sets report" }
-
                 div {
                     id = "data-project-model"
                     attributes["data-project-model"] =
                         Json(JsonConfiguration.Default).stringify(MppModel.serializer(), model)
                 }
-
-//                model.sourceSets.forEach {
-//                    renderSourceSet(projectRoot, it)
-//                }
             }
         }
     }

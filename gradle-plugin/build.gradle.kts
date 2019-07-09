@@ -9,6 +9,7 @@ plugins {
 dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib")
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect")
     compileOnly(gradleApi())
     compileOnly(kotlin("gradle-plugin", "1.3-SNAPSHOT"))
 

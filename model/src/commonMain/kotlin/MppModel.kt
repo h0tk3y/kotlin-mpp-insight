@@ -11,7 +11,8 @@ data class MppModel(
 @Serializable
 data class TargetModel(
     val name: String,
-    val compilations: List<CompilationModel>
+    val compilations: List<CompilationModel>,
+    val variants: List<VariantModel>
 )
 
 @Serializable
@@ -25,8 +26,8 @@ data class SourceSetModel(
     val name: String,
     val kotlinSrcDirs: List<String>,
     val resourcesSrcDirs: List<String>,
-    val participatesInCompilations: List<CompilationId>,
-    var dependsOn: List<SourceSetModel>
+    var dependsOn: List<SourceSetModel>,
+    val dependencies: Map<DependencyScope, List<ResolvedDependencyModel>>
 )
 
 @Serializable
@@ -34,3 +35,25 @@ data class CompilationModel(
     val id: CompilationId,
     val defaultSourceSetName: String
 )
+
+//region Dependencies
+
+enum class DependencyScope {
+    API, IMPLEMENTATION, COMPILE_ONLY, RUNTIME_ONLY
+}
+
+@Serializable
+data class VariantModel(
+    val name: String,
+    val producingCompilation: CompilationModel
+)
+
+@Serializable
+data class ResolvedDependencyModel(
+    val group: String,
+    val module: String,
+    val version: String,
+    val transitiveDependencies: List<ResolvedDependencyModel>
+)
+
+//endregion

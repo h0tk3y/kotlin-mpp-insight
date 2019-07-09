@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform").version("1.3.50-dev-1478").apply(false)
-    kotlin("plugin.serialization").version("1.3.50-dev-1478").apply(false)
+    kotlin("multiplatform").version("1.3.50-dev-1569").apply(false)
+    kotlin("plugin.serialization").version("1.3.50-dev-1569").apply(false)
 }
 
 allprojects {

@@ -2,8 +2,11 @@ package com.h0tk3y.kotlin.mpp.insight
 
 import com.h0tk3y.kotlin.mpp.insight.model.*
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.JointAndroidKotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinVariant
 
 class ModelBuilder {
     fun buildMppModel(project: Project): MppModel {
@@ -16,9 +19,15 @@ class ModelBuilder {
         project.multiplatformExtension.targets
             .filter { it.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
             .map { target ->
-                TargetModel(target.name, target.compilations.map {
+                val compilations = target.compilations.map {
                     CompilationModel(CompilationId(target.name, it.name), it.defaultSourceSet.name)
-                })
+                }
+
+                val variants = target.getTargetComponents().flatMap {
+                    buildVariantModelFromKotlinTargetComponent(it, compilations)
+                }
+
+                TargetModel(target.name, compilations, variants)
             }
 
     fun buildSourceSetsModel(project: Project): List<SourceSetModel> {
@@ -27,8 +36,9 @@ class ModelBuilder {
                 sourceSet.name,
                 sourceSet.kotlin.srcDirs.map { it.path },
                 sourceSet.resources.srcDirs.map { it.path },
-                emptyList(), // todo
-                emptyList() // modified below
+                // todo
+                emptyList(), // modified below
+                emptyMap() // todo
             )
         }
 
@@ -42,4 +52,23 @@ class ModelBuilder {
 
         return modelMap.values.toList()
     }
+
+    private fun buildVariantModelFromKotlinTargetComponent(
+        component: KotlinTargetComponent, compilations:
+        Iterable<CompilationModel>
+    ):
+        List<VariantModel> {
+        val usages = when (component) {
+            is KotlinVariant -> component.usages
+            is JointAndroidKotlinTargetComponent -> component.usages
+            else -> emptySet()
+        }
+        return usages.map { usage ->
+            VariantModel(
+                usage.name,
+                compilations.single { it.id.compilationName == usage.compilation.name }
+            )
+        }
+    }
+
 }
